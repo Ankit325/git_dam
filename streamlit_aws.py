@@ -17,7 +17,7 @@ if uploader is not None:
     
     # Download from s3
     s3_r=boto3.resource("s3")
-    my_bucket=s3_r.Bucket(input_bucket)
+    my_bucket=s3_r.Bucket(input_bucket,"ap-northeast-1")
     for object in my_bucket.objects.all():
         #print(object)
         if(object.key.endswith(".json")):
