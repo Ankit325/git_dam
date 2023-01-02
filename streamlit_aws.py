@@ -2,6 +2,7 @@ import streamlit as st
 import boto3
 import os
 import json
+import time
 
 output_bucket='final-output-0123456'
 input_bucket='image-test-0123456'
@@ -20,17 +21,22 @@ if uploader is not None:
     # st.write(base)
     file_name=name.replace(base, '.json')
     #st.write(file_name)
+
+    #Refreshing cache
+    # clients=boto3.client("storagegateway")
+    # response = clients.refresh_cache(
+    #         FileShareARN='arn:aws:s3:ap-northeast-1:990490295689:accesspoint/accessoutput-0123456')
+
     # Download from s3
+    time.sleep(10)
     s3_r=boto3.resource("s3")
     # file_name="78666984.json"
     my_bucket=s3_r.Bucket(output_bucket)
     for object in my_bucket.objects.all():
         #print(object)
-        st.write(object.key)
+        # st.write(object.key)
         if(object.key==file_name):
             st.write("File found")
-            # response = client.refresh_cache(
-            #         FileShareARN='arn:aws:s3:::final-output-0123456')
             s3.download_file(output_bucket, object.key, object.key)
             st.write("File downloaded")
             # Read json file
