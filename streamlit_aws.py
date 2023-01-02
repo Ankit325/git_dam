@@ -11,7 +11,6 @@ uploader= st.file_uploader("Choose a file")
 #Upload to s3
 if uploader is not None:
     s3 = boto3.client('s3')
-    client=boto3.client('rekognition')
     s3.upload_fileobj(uploader, input_bucket, uploader.name)
     st.write("File uploaded")
     
