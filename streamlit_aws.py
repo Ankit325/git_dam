@@ -1,6 +1,7 @@
 import streamlit as st
 import boto3
 import os
+import json
 
 
 input_bucket='custom-labels-console-ap-northeast-1-c8d279ec4d'
@@ -13,23 +14,16 @@ if uploader is not None:
     client=boto3.client('rekognition')
     s3.upload_fileobj(uploader, input_bucket, uploader.name)
     st.write("File uploaded")
-    response=client.detect_labels(
-        Image={
-            'S3Object': {
-                'Bucket': input_bucket,
-                'Name': uploader.name,
-            }
-        },
-        Features=["IMAGE_PROPERTIES"],
-
-    )
-    st.write(response)
-
-#Download from s3
-# my_bucket = s3.Bucket(input_bucket)
-# for s3_file in my_bucket.objects.all():
-#     s3_file.download_file(os.path.basename(s3_file.key))
-#     st.write("File downloaded")
-
     
-   
+    # Download from s3
+    s3_r=boto3.resource("s3")
+    my_bucket=s3_r.Bucket(input_bucket)
+    for object in my_bucket.objects.all():
+        #print(object)
+        if(object.key.endswith(".json")):
+            s3.download_file(input_bucket, object.key, object.key)
+            st.write("File downloaded")
+            # Read json file
+            with open(object.key) as f:
+                data = json.load(f)
+                st.write(data)
