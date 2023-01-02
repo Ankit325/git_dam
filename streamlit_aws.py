@@ -7,14 +7,18 @@ import time
 output_bucket='final-output-0123456'
 input_bucket='image-test-0123456'
 
+st.title("Image Processing")
+
 # Upload to streamlit
 uploader= st.file_uploader("Choose a file")
+# st.image(uploader)
 #Upload to s3
 if uploader is not None:
+    st.image(uploader)
     s3 = boto3.client('s3')
     s3.upload_fileobj(uploader, input_bucket, uploader.name)
     name=uploader.name
-    st.write("File uploaded")
+    st.write("File Uploaded in S3 Bucket")
     #Change file name
     # st.write(name)
     base=os.path.splitext(name)[1]
@@ -36,9 +40,11 @@ if uploader is not None:
         #print(object)
         # st.write(object.key)
         if(object.key==file_name):
-            st.write("File found")
+            st.write("Execution Completed")
             s3.download_file(output_bucket, object.key, object.key)
-            st.write("File downloaded")
+            st.markdown("Features Extracted From Image")
+
+
             # Read json file
             with open(object.key) as f:
                 data = json.load(f)
